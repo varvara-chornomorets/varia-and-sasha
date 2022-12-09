@@ -28,5 +28,5 @@ if sys.argv[2] == "-overall":
                 if participant.team == country or participant.noc == country and participant.medal != "NA":
                     years[int(participant.year)] += 1
             print(max(years, key=years.get), max(years.values()))
-            for i in range(1896, 2020, 4):
+            for i in range(1896, 2018, 2):
                 years[i] = 0

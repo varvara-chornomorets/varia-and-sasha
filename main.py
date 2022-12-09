@@ -16,16 +16,16 @@ if sys.argv[2] == "-medals":
 
 # task 3
 if sys.argv[2] == "-overall":
-    with open(sys.argv[1], 'r') as file:
-        line = file.readline()
-        years = {}
-        for i in range(1896, 2018, 2):
-            years[i] = 0
-        for country in sys.argv[3::]:
+    years = {}
+    for i in range(1896, 2018, 2):
+        years[i] = 0
+    for country in sys.argv[3::]:
+        with open(sys.argv[1], 'r') as file:
+            line = file.readline()
             for line in file.readlines():
                 line = line[0:-1]
                 participant = Participant(*line.split("\t"))
-                if participant.team == country or participant.noc == country and participant.medal != "NA":
+                if (participant.team == country or participant.noc == country) and participant.medal != "NA":
                     years[int(participant.year)] += 1
             print(max(years, key=years.get), max(years.values()))
             for i in range(1896, 2018, 2):

@@ -77,14 +77,39 @@ def task1_with_output(filename, country, year, file_to_output):
             output_file.write("  ")
 
 
-# def task2(filename, countries_for_overall):
-#     list_of_countries = []
-#     # check if there is one country or more, creates list with all countries
-#     if type(countries_for_overall) == str:
-#         list_of_countries.append(countries_for_overall)
-#     else:
-#         list_of_countries = countries_for_overall
-#     with open(filename, "w") as file:
+def calculate_overall(filename, countries_for_overall):
+    list_of_countries = []
+    # check if there is one country or more, creates list with all countries
+    if type(countries_for_overall) == str:
+        list_of_countries.append(countries_for_overall)
+    else:
+        list_of_countries = countries_for_overall
+
+    info_about_every_year_for_country = {}
+    for country in list_of_countries:
+        print(country)
+        info_about_every_year_for_country[country] = {}
+        with open(filename, "r") as file:
+            for i in range(1896, 2018, 2):
+                info_about_every_year_for_country[country][i] = 0
+
+            for line in file.readlines():
+                print("0980890809")
+                participant = Participant(*line.strip().split("\t"))
+                print(participant.team)
+                if (participant.team == country or participant.noc == country) and participant.medal != "NA":
+                    info_about_every_year_for_country[country][int(participant.year)] += 1
+                    print("added")
+    return info_about_every_year_for_country
+
+
+def task2(filename, countries_for_overall):
+    info_about_every_year_for_country = calculate_overall(filename, countries_for_overall)
+    print(info_about_every_year_for_country)
+    for country in info_about_every_year_for_country:
+        print(country,
+              max(info_about_every_year_for_country[country], key=info_about_every_year_for_country[country].get),
+              max(info_about_every_year_for_country[country].values))
 
 
 def main():
@@ -95,16 +120,19 @@ def main():
     parser.add_argument("-overall", nargs="*", required=False)
     args = parser.parse_args()
     filename = args.filename
-    country, year = args.medals
+    country_and_year = args.medals
     output = args.output
     countries_for_overall = args.overall
-    if output and country:
+    if output and country_and_year:
+        country, year = country_and_year
         task1_with_output(filename, country, year, output)
-    elif country:
+    elif country_and_year:
+        country, year = country_and_year
         task1(filename, country, year)
+    elif countries_for_overall and output:
+        task2(filename, countries_for_overall)
     elif countries_for_overall:
-        pass
-        # task2(filename, countries_for_overall)
+        task2(filename, countries_for_overall)
 
 
 if __name__ == "__main__":

@@ -114,6 +114,19 @@ def task2(filename, countries_for_overall):
               max(info_about_every_year_for_country[country].values()))
 
 
+def task2_with_output(filename, countries_for_overall, output_file):
+    task2(filename, countries_for_overall)
+    info_about_every_country = calculate_overall(filename, countries_for_overall)
+    with open(output_file, "w") as file:
+        for country in info_about_every_country:
+            if not info_about_every_country[country]:
+                file.write(f"there is no such country as {country}")
+            else:
+                file.write(f"{country} "
+                           f"{max(info_about_every_country[country], key=info_about_every_country[country].get)} "
+                           f"{max(info_about_every_country[country].values())}\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename")
@@ -132,7 +145,7 @@ def main():
         country, year = country_and_year
         task1(filename, country, year)
     elif countries_for_overall and output:
-        task2(filename, countries_for_overall)
+        task2_with_output(filename, countries_for_overall, output)
     elif countries_for_overall:
         task2(filename, countries_for_overall)
 

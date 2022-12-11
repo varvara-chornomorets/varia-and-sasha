@@ -87,29 +87,31 @@ def calculate_overall(filename, countries_for_overall):
 
     info_about_every_year_for_country = {}
     for country in list_of_countries:
-        print(country)
         info_about_every_year_for_country[country] = {}
         with open(filename, "r") as file:
             for i in range(1896, 2018, 2):
                 info_about_every_year_for_country[country][i] = 0
-
+            available_countries = []
             for line in file.readlines():
-                print("0980890809")
                 participant = Participant(*line.strip().split("\t"))
-                print(participant.team)
                 if (participant.team == country or participant.noc == country) and participant.medal != "NA":
                     info_about_every_year_for_country[country][int(participant.year)] += 1
-                    print("added")
+                available_countries.append(participant.team)
+                available_countries.append(participant.noc)
+            if country not in available_countries:
+                info_about_every_year_for_country[country] = False
     return info_about_every_year_for_country
 
 
 def task2(filename, countries_for_overall):
     info_about_every_year_for_country = calculate_overall(filename, countries_for_overall)
-    print(info_about_every_year_for_country)
     for country in info_about_every_year_for_country:
+        if not info_about_every_year_for_country[country]:
+            print("there is no such country as", country)
+            continue
         print(country,
               max(info_about_every_year_for_country[country], key=info_about_every_year_for_country[country].get),
-              max(info_about_every_year_for_country[country].values))
+              max(info_about_every_year_for_country[country].values()))
 
 
 def main():

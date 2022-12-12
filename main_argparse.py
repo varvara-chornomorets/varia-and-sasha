@@ -103,7 +103,7 @@ def calculate_overall(filename, countries_for_overall):
     return info_about_every_year_for_country
 
 
-def task2(filename, countries_for_overall):
+def overall_function(filename, countries_for_overall):
     info_about_every_year_for_country = calculate_overall(filename, countries_for_overall)
     for country in info_about_every_year_for_country:
         if not info_about_every_year_for_country[country]:
@@ -114,8 +114,8 @@ def task2(filename, countries_for_overall):
               max(info_about_every_year_for_country[country].values()))
 
 
-def task2_with_output(filename, countries_for_overall, output_file):
-    task2(filename, countries_for_overall)
+def overall_with_output(filename, countries_for_overall, output_file):
+    overall_function(filename, countries_for_overall)
     info_about_every_country = calculate_overall(filename, countries_for_overall)
     with open(output_file, "w") as file:
         for country in info_about_every_country:
@@ -127,17 +127,51 @@ def task2_with_output(filename, countries_for_overall, output_file):
                            f"{max(info_about_every_country[country].values())}\n")
 
 
+def total_function(filename, year):
+    suitable_countries = {}
+    with open(filename, "r") as file:
+        line = file.readline()
+        for line in file.readlines():
+            participant = Participant(*line.strip().split("\t"))
+            if participant.medal != "NA" and participant.year == year:
+                if participant.noc not in suitable_countries:
+                    suitable_countries[participant.noc] = {}
+                    for type_of_medal in types_of_medals:
+                        suitable_countries[participant.noc][type_of_medal] = 0
+
+                suitable_countries[participant.noc][participant.medal] += 1
+        return suitable_countries
+
+
+def total_function_print(filename, year):
+    suitable_countries = total_function(filename, year)
+    for country in suitable_countries:
+        print(f"{country} - {suitable_countries[country]['Gold']} - {suitable_countries[country]['Silver']}"
+              f" - {suitable_countries[country]['Bronze']}")
+
+
+def total_function_output(filename, year, output_file):
+    total_function_print(filename, year)
+    suitable_countries = total_function(filename, year)
+    with open(output_file, "w") as file:
+        for country in suitable_countries:
+            file.write(f"{country} - {suitable_countries[country]['Gold']}"
+                       f" - {suitable_countries[country]['Silver']} - {suitable_countries[country]['Bronze']}\n")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename")
     parser.add_argument("-medals", nargs="*", required=False)
     parser.add_argument("-output", required=False)
     parser.add_argument("-overall", nargs="*", required=False)
+    parser.add_argument("-total", required=False)
     args = parser.parse_args()
     filename = args.filename
     country_and_year = args.medals
     output = args.output
     countries_for_overall = args.overall
+    year = args.total
     if output and country_and_year:
         country, year = country_and_year
         task1_with_output(filename, country, year, output)
@@ -145,9 +179,14 @@ def main():
         country, year = country_and_year
         task1(filename, country, year)
     elif countries_for_overall and output:
-        task2_with_output(filename, countries_for_overall, output)
+        overall_with_output(filename, countries_for_overall, output)
     elif countries_for_overall:
-        task2(filename, countries_for_overall)
+        overall_function(filename, countries_for_overall)
+    elif year and output:
+        total_function_output(filename, year, output)
+    elif year:
+        total_function_print(filename, year
+                             )
 
 
 if __name__ == "__main__":

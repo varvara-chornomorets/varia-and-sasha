@@ -32,6 +32,8 @@ if sys.argv[2] == "-medals":
                     if sys.argv[5] == "-output":
                         with open(sys.argv[6], 'a') as output_file:
                             output_file.write(type_of_medal+" "+str(number)+"\n")
+        else:
+            print("there is no such country as", sys.argv[3])
 
 
 # task 2
@@ -84,3 +86,52 @@ if sys.argv[2] == "-overall":
                 if (participant.team == country or participant.noc == country) and participant.medal != "NA":
                     years[int(participant.year)] += 1
             print(max(years, key=years.get), max(years.values()))
+
+
+# task 4
+if sys.argv[2] == "-interactive":
+    filename = sys.argv[1]
+    first = 2020
+    results = {}
+    bronze = {}
+    silver = {}
+    gold = {}
+    country = input()
+    with open(filename, 'r') as file:
+        line = file.readline()
+        for line in file.readlines():
+            line = line[0:-1]
+            participant = Participant(*line.split("\t"))
+            if participant.noc == country or participant.team == country:
+                if int(participant.year) < first:
+                    first = int(participant.year)
+                if participant.year not in results:
+                    results[participant.year] = 0
+                    bronze[participant.year] = 0
+                    silver[participant.year] = 0
+                    gold[participant.year] = 0
+                if participant.medal == "Bronze":
+                    bronze[participant.year] += 1
+                    results[participant.year] += 1
+                elif participant.medal == "Silver":
+                    silver[participant.year] += 1
+                    results[participant.year] += 1
+                elif participant.medal == "Gold":
+                    gold[participant.year] += 1
+                    results[participant.year] += 1
+    print("First year:", first)
+    print(f"Best year: {max(results, key=results.get)} - {max(results.values())}")
+    print(f"Worst year: {min(results, key=results.get)} - {min(results.values())}")
+    k = 0
+    for i in bronze.values():
+        k += i
+    print("Average bronzes:", int(k/len(bronze)))
+    k = 0
+    for i in silver.values():
+        k += i
+    print("Average silvers:", int(k / len(silver)))
+    k = 0
+    for i in gold.values():
+        k += i
+    print("Average golds:", int(k/len(gold)))
+

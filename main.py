@@ -119,19 +119,22 @@ if sys.argv[2] == "-interactive":
                 elif participant.medal == "Gold":
                     gold[participant.year] += 1
                     results[participant.year] += 1
-    print("First year:", first)
-    print(f"Best year: {max(results, key=results.get)} - {max(results.values())}")
-    print(f"Worst year: {min(results, key=results.get)} - {min(results.values())}")
-    k = 0
-    for i in bronze.values():
-        k += i
-    print("Average bronzes:", int(k/len(bronze)))
-    k = 0
-    for i in silver.values():
-        k += i
-    print("Average silvers:", int(k / len(silver)))
-    k = 0
-    for i in gold.values():
-        k += i
-    print("Average golds:", int(k/len(gold)))
+    if first != 2020:
+        print("First year:", first)
+        print(f"Best year: {max(results, key=results.get)} - {max(results.values())}")
+        print(f"Worst year: {min(results, key=results.get)} - {min(results.values())}")
+        k = 0
+        for i in bronze.values():
+            k += i
+        print("Average bronzes:", int(k/len(bronze)))
+        k = 0
+        for i in silver.values():
+            k += i
+        print("Average silvers:", int(k / len(silver)))
+        k = 0
+        for i in gold.values():
+            k += i
+        print("Average golds:", int(k/len(gold)))
+    else:
+        print("there is no such country as", country)
 

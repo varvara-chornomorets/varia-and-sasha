@@ -159,6 +159,63 @@ def total_function_output(filename, year, output_file):
                        f" - {suitable_countries[country]['Silver']} - {suitable_countries[country]['Bronze']}\n")
 
 
+def interactive(filename):
+    # Додайте до програми команду -interactive після введеня якої програма
+    # переходить у інтерактивний режим (тобто зчитує у циклі команди через input(), як ви звикли).
+    # Користувач може вводити країну (за назвою або кодом), а програма має виводити статистику ц
+    # ієї країни - перша участь у олімпіаді (рік та місце проведення), найуспішніша олімпіада
+    # (за кількістю медалей, вивести це значення), найневдаліша,
+    # та середня кількість медалей кожного типу на кожній олімпіаді
+    country = input("Please, enter the name of the country you would love to get statistics about: ")
+    results = {}
+    bronze = {}
+    silver = {}
+    gold = {}
+    first = 2020
+    first_city = 'VARIAIIAAIIAIAIAIAI'
+    with open(filename, 'r') as file:
+        line = file.readline()
+        for line in file.readlines():
+            line = line[0:-1]
+            participant = Participant(*line.split("\t"))
+            if participant.noc == country or participant.team == country:
+                if int(participant.year) < first:
+                    first = int(participant.year)
+                    first_city = participant.city
+                if participant.year not in results:
+                    results[participant.year] = 0
+                    bronze[participant.year] = 0
+                    silver[participant.year] = 0
+                    gold[participant.year] = 0
+                if participant.medal == "Bronze":
+                    bronze[participant.year] += 1
+                    results[participant.year] += 1
+                elif participant.medal == "Silver":
+                    silver[participant.year] += 1
+                    results[participant.year] += 1
+                elif participant.medal == "Gold":
+                    gold[participant.year] += 1
+                    results[participant.year] += 1
+
+    if first != 2020:
+        print("First year:", first, "First city: ", first_city)
+        print(f"Best year: {max(results, key=results.get)} - {max(results.values())}")
+        print(f"Worst year: {min(results, key=results.get)} - {min(results.values())}")
+        k = 0
+        for i in bronze.values():
+            k += i
+        print("Average bronzes:", int(k/len(bronze)))
+        k = 0
+        for i in silver.values():
+            k += i
+        print("Average silvers:", int(k / len(silver)))
+        k = 0
+        for i in gold.values():
+            k += i
+        print("Average golds:", int(k/len(gold)))
+    else:
+        print("there is no such country as", country)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename")
@@ -166,12 +223,14 @@ def main():
     parser.add_argument("-output", required=False)
     parser.add_argument("-overall", nargs="*", required=False)
     parser.add_argument("-total", required=False)
+    parser.add_argument("-interactive", action="store_true", required=False)
     args = parser.parse_args()
     filename = args.filename
     country_and_year = args.medals
     output = args.output
     countries_for_overall = args.overall
     year = args.total
+    is_interactive = args.interactive
     if output and country_and_year:
         country, year = country_and_year
         task1_with_output(filename, country, year, output)
@@ -185,9 +244,30 @@ def main():
     elif year and output:
         total_function_output(filename, year, output)
     elif year:
-        total_function_print(filename, year
-                             )
+        total_function_print(filename, year)
+    elif is_interactive:
+        interactive(filename)
 
 
 if __name__ == "__main__":
     main()
+
+
+    # with open(filename, "r") as file:
+    #     dict_with_years_and_medals = {}
+    #     for line in file:
+    #         participant = Participant(*line.strip().split("\t"))
+    #         if participant.team == user_country or participant.noc == user_country:
+    #             if int(participant.year) not in dict_with_years_and_medals:
+    #                 dict_with_years_and_medals[int(participant.year)] = {}
+    #                 dict_with_years_and_medals[int(participant.year)]["place"] = participant.city
+    #                 for type_of_medals in types_of_medals:
+    #                     dict_with_years_and_medals[int(participant.year)][type_of_medals] = 0
+    #                 dict_with_years_and_medals[int(participant.year)]["total"] = 0
+    #
+    #             elif participant.medal != "NA":
+    #
+    #                 dict_with_years_and_medals[int(participant.year)][participant.medal] += 1
+    #                 dict_with_years_and_medals[int(participant.year)]["total"] += 1
+    #     print(dict_with_years_and_medals)
+    #     first_

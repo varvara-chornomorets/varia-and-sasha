@@ -68,8 +68,13 @@ if sys.argv[2] == "-total":
                     gold[participant.noc] = 1
                     bronze[participant.noc] = 0
                     silver[participant.noc] = 0
+        total = {}
         for i in bronze:
-            print(i+" - "+(str(gold[i]))+" - "+str(silver[i])+" - "+str(bronze[i]))
+            total[i] = bronze[i] + silver[i] + gold[i]
+        while len(total) > 0:
+            key = max(total, key=total.get)
+            print(f"{key} - {bronze[key]} - {silver[key]} - {gold[key]}")
+            total.pop(key)
 
 
 # task 3

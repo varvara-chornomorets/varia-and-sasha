@@ -97,6 +97,7 @@ if sys.argv[2] == "-overall":
 if sys.argv[2] == "-interactive":
     filename = sys.argv[1]
     first = 2020
+    first_city = "SASSADSAFGDSHDGASHDGAS"
     results = {}
     bronze = {}
     silver = {}
@@ -110,6 +111,7 @@ if sys.argv[2] == "-interactive":
             if participant.noc == country or participant.team == country:
                 if int(participant.year) < first:
                     first = int(participant.year)
+                    first_city = participant.city
                 if participant.year not in results:
                     results[participant.year] = 0
                     bronze[participant.year] = 0
@@ -125,7 +127,7 @@ if sys.argv[2] == "-interactive":
                     gold[participant.year] += 1
                     results[participant.year] += 1
     if first != 2020:
-        print("First year:", first)
+        print("First year:", first, "First city: ", first_city)
         print(f"Best year: {max(results, key=results.get)} - {max(results.values())}")
         print(f"Worst year: {min(results, key=results.get)} - {min(results.values())}")
         k = 0

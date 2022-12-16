@@ -129,6 +129,7 @@ def overall_with_output(filename, countries_for_overall, output_file):
 
 def total_function(filename, year):
     suitable_countries = {}
+    total_countries = {}
     with open(filename, "r") as file:
         line = file.readline()
         for line in file.readlines():
@@ -136,18 +137,26 @@ def total_function(filename, year):
             if participant.medal != "NA" and participant.year == year:
                 if participant.noc not in suitable_countries:
                     suitable_countries[participant.noc] = {}
+                    total_countries[participant.noc] = 0
                     for type_of_medal in types_of_medals:
                         suitable_countries[participant.noc][type_of_medal] = 0
 
                 suitable_countries[participant.noc][participant.medal] += 1
-        return suitable_countries
+                total_countries[participant.noc] += 1
+        return suitable_countries, total_countries
 
 
 def total_function_print(filename, year):
-    suitable_countries = total_function(filename, year)
-    for country in suitable_countries:
-        print(f"{country} - {suitable_countries[country]['Gold']} - {suitable_countries[country]['Silver']}"
-              f" - {suitable_countries[country]['Bronze']}")
+    suitable_countries, total_countries = total_function(filename, year)
+    length_of_dict = len(total_countries)
+    for i in range (0, length_of_dict):
+        max_country = max(total_countries, key=total_countries.get)
+        total_countries.pop(max_country)
+        print(f"{max_country} - {suitable_countries[max_country]['Gold']} - {suitable_countries[max_country]['Silver']}"
+              f" - {suitable_countries[max_country]['Bronze']}")
+    # for country in suitable_countries:
+    #     print(f"{country} - {suitable_countries[country]['Gold']} - {suitable_countries[country]['Silver']}"
+    #           f" - {suitable_countries[country]['Bronze']}")
 
 
 def total_function_output(filename, year, output_file):
